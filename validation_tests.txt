@@ -1,0 +1,61 @@
+Here is an example of how you can write unit test cases to validate the data in Python:
+
+```
+import unittest
+
+class TestDataValidation(unittest.TestCase):
+
+    def test_user_id(self):
+        # Check if user ID is unique for each user
+        unique_user_ids = set(data['User ID'])
+        self.assertEqual(len(unique_user_ids), len(data))
+    
+    def test_device_model(self):
+        # Check if device model is not empty
+        self.assertTrue(all(data['Device Model']))
+    
+    def test_operating_system(self):
+        # Check if operating system is either iOS or Android
+        self.assertTrue(all(data['Operating System'].isin(['iOS', 'Android'])))
+    
+    def test_app_usage_time(self):
+        # Check if app usage time is non-negative
+        self.assertTrue(all(data['App Usage Time'] >= 0))
+    
+    def test_screen_on_time(self):
+        # Check if screen on time is non-negative
+        self.assertTrue(all(data['Screen On Time'] >= 0))
+    
+    def test_battery_drain(self):
+        # Check if battery drain is non-negative
+        self.assertTrue(all(data['Battery Drain'] >= 0))
+    
+    def test_number_of_apps_installed(self):
+        # Check if number of apps installed is non-negative
+        self.assertTrue(all(data['Number of Apps Installed'] >= 0))
+    
+    def test_data_usage(self):
+        # Check if data usage is non-negative
+        self.assertTrue(all(data['Data Usage'] >= 0))
+    
+    def test_age(self):
+        # Check if age is non-negative
+        self.assertTrue(all(data['Age'] >= 0))
+    
+    def test_gender(self):
+        # Check if gender is either Male or Female
+        self.assertTrue(all(data['Gender'].isin(['Male', 'Female'])))
+    
+    def test_user_behavior_class(self):
+        # Check if user behavior class is between 1 and 5
+        self.assertTrue(all(data['User Behavior Class'].between(1, 5)))
+    
+if __name__ == '__main__':
+    unittest.main()
+```
+
+In this example, we create a `TestDataValidation` class that inherits from `unittest.TestCase`. Each test case is defined as a separate method starting with the prefix `test_`. 
+
+Inside each test case, we perform various assertions to validate the data. For example, in the `test_user_id` method, we check if the number of unique user IDs is equal to the total number of samples in the dataset.
+
+To run the unit tests, you can execute the script or run `python -m unittest` from the command line. The test runner will execute all the test cases and report the results.

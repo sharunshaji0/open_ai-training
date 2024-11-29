@@ -1,0 +1,111 @@
+# Unit Test Cases and Comments
+
+# Import necessary libraries
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.model_selection import RandomizedSearchCV
+
+# Separate features and target variables
+X = df.drop(columns=["user_behavior_class"], axis=1)
+y = df["user_behavior_class"]
+
+# Get categorical and numerical columns
+cat_cols = X.select_dtypes(include=['object']).columns.values
+num_cols = X.select_dtypes(include=np.number).columns.tolist()
+
+# Data Preprocessing
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), num_cols),
+        ('cat', OneHotEncoder(drop='first'), cat_cols)
+    ])
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state=42, stratify=y)
+
+# Initialize the classifier
+clf = LogisticRegression(max_iter=200)
+
+# Initialize scores dictionary to store evaluation metrics
+scores = {'accuracy': {}, 'precision': {}, 'recall': {}, 'f1-score': {}}
+
+# Create a pipeline for data preprocessing and classification
+model = Pipeline(
+    steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', clf)
+    ])
+
+# Fit the model on the training data
+model.fit(X_train, y_train)
+
+# Make predictions on the test data
+y_pred = model.predict(X_test)
+
+# Generate classification report
+report = classification_report(y_test, y_pred, output_dict=True)
+
+# Calculate and store evaluation metrics
+scores['accuracy'][name] = accuracy_score(y_test, y_pred)
+scores['precision'][name] = report['macro avg']['precision']
+scores['recall'][name] = report['macro avg']['recall']
+scores['f1-score'][name] = report['macro avg']['f1-score']dScaler, OneHotEncoder   
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.model_selection import RandomizedSearchCV
+
+# Test Data Preprocessing
+# Test 1.1: Verify if numerical columns are scaled using StandardScaler
+num_scaler = StandardScaler()
+X_num_scaled = num_scaler.fit_transform(X[num_cols])
+assert np.allclose(X_num_scaled, preprocessor.named_transformers_['num'].transform(X))
+
+# Test 1.2: Verify if categorical columns are encoded using OneHotEncoder with 'drop' parameter set to 'first'
+cat_encoder = OneHotEncoder(drop='first')
+X_cat_encoded = cat_encoder.fit_transform(X[cat_cols]).toarray()
+assert np.allclose(X_cat_encoded, preprocessor.named_transformers_['cat'].transform(X))
+
+# Test Train-Test Split
+# Test 2.1: Verify if train and test datasets are split correctly with the specified test_size and random_state
+X_train_expected, X_test_expected, y_train_expected, y_test_expected = train_test_split(X, y, test_size=0.6, random_state=42, stratify=y)
+assert np.allclose(X_train_expected, X_train)
+assert np.allclose(X_test_expected, X_test)
+assert np.allclose(y_train_expected, y_train)
+assert np.allclose(y_test_expected, y_test)
+
+# Test 2.2: Verify if y variable is stratified during the split
+_, y_train_counts = np.unique(y_train, return_counts=True)
+_, y_test_counts = np.unique(y_test, return_counts=True)
+assert np.allclose(y_train_counts, y_test_counts)
+
+# Test Model Training and Prediction
+# Test 3.1: Verify if the model is trained using the preprocessed data
+model.fit(X_train_expected, y_train_expected)
+assert np.allclose(model['preprocessor'].transform(X_train_expected), model['classifier'].named_steps['preprocessor'].transform(X_train))
+
+# Test 3.2: Verify if the model predicts the target variable correctly
+y_pred_expected = model.predict(X_test_expected)
+assert np.allclose(y_pred_expected, y_pred)
+
+# Test Classification Report and Metrics
+# Test 4.1: Verify if the classification report is generated correctly
+report_expected = classification_report(y_test_expected, y_pred_expected, output_dict=True)
+assert report_expected == report
+
+# Test 4.2: Verify if accuracy, precision, recall, and f1-score metrics are calculated correctly
+accuracy
